@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">GetImageEdgeApp</string>
+    <string name="thbar_hint">Set threshold:</string>
+    <string name="action_camera">Take a photo</string>
+</resources>
