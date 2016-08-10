@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.wuja6.android.getimageedgeapp.activity.MainActivity" >
+    tools:context="com.wuja6.android.getimageedgeapp.activity.MainActivity">
 
     <ImageView
         android:id="@+id/main_img"
@@ -17,19 +17,43 @@
         android:layout_weight="1"
         android:background="@android:drawable/screen_background_dark" />
 
-    <TextView
+    <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/thbar_hint"
-        android:textSize="15sp"
-        android:paddingTop="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="0dp"
-        android:paddingStart="10dp"
-        android:paddingEnd="0dp"/>
-    <SeekBar
-        android:id="@+id/threshold_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
 
+        <TableRow
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/qbar_hint"
+                android:textSize="15sp" />
+
+            <SeekBar
+                android:id="@+id/quality_bar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:max="400"
+                android:layout_weight="1" />
+        </TableRow>
+
+        <TableRow
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/thbar_hint"
+                android:textSize="15sp" />
+
+            <SeekBar
+                android:id="@+id/threshold_bar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+        </TableRow>
+    </TableLayout>
 </LinearLayout>

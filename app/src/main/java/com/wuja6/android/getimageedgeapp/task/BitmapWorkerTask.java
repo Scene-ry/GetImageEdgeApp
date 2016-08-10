@@ -1,8 +1,11 @@
 package com.wuja6.android.getimageedgeapp.task;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.widget.ImageView;
 
 import java.lang.ref.WeakReference;
@@ -11,16 +14,19 @@ import java.lang.ref.WeakReference;
  * Created by Scenery on 2016/8/9.
  */
 public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
+    private WeakReference<Context> contextReference;
     private WeakReference<ImageView> imageViewReference;
 
-    public BitmapWorkerTask(ImageView view) {
+    public BitmapWorkerTask(Context context, ImageView view) {
+        contextReference = new WeakReference<Context>(context);
         imageViewReference = new WeakReference<ImageView>(view);
     }
 
     @Override
     protected Bitmap doInBackground(String... params) {
         String data = params[0];
-        return decodeSampledBitmapFromResource(data, 200, 200);
+        int q = getPreQuality();
+        return decodeSampledBitmapFromResource(data, q, q);
     }
 
     @Override
@@ -33,7 +39,7 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
         }
     }
 
-    public static int calculateInSampleSize(
+    private int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image
         final int height = options.outHeight;
@@ -41,16 +47,23 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
         int inSampleSize = 1;
 
         if (height > reqHeight || width > reqWidth) {
-            if (width > height) {
-                inSampleSize = Math.round((float)height / (float)reqHeight);
-            } else {
-                inSampleSize = Math.round((float)width / (float)reqWidth);
+//            if (width > height) {
+//                inSampleSize = Math.round((float)height / (float)reqHeight);
+//            } else {
+//                inSampleSize = Math.round((float)width / (float)reqWidth);
+//            }
+
+            final int halfHeight = height >> 1;
+            final int halfWidth = width >> 1;
+
+            while ((halfHeight / inSampleSize) > reqHeight && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize <<= 1;
             }
         }
         return inSampleSize;
     }
 
-    public static Bitmap decodeSampledBitmapFromResource(String path, int reqWidth, int reqHeight) {
+    private Bitmap decodeSampledBitmapFromResource(String path, int reqWidth, int reqHeight) {
 
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -63,5 +76,10 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
         return BitmapFactory.decodeFile(path, options);
+    }
+
+    private int getPreQuality() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(contextReference.get());
+        return preferences.getInt("image-quality", 100);
     }
 }

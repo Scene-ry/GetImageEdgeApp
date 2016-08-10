@@ -1,8 +1,9 @@
 package com.wuja6.android.getimageedgeapp.activity;
 
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import java.io.File;
 
@@ -14,7 +15,6 @@ import com.wuja6.android.getimageedgeapp.task.OpenCVProcessTask;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String EDGE_IMAGE_FILE = "edge.jpg";
 
     private ImageView imageView;
+    private SeekBar qualityBar;
     private SeekBar thresholdBar;
 
     private ImageFileService imageFileService;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         imageView = (ImageView) findViewById(R.id.main_img);
         thresholdBar = (SeekBar) findViewById(R.id.threshold_bar);
+        qualityBar = (SeekBar) findViewById(R.id.quality_bar);
 
         imageFileService = ImageFileService.INSTANCE;
         imageFileService.setContext(MainActivity.this);
@@ -57,6 +59,23 @@ public class MainActivity extends AppCompatActivity {
         // set a initial picture for test
 //		Bitmap init = BitmapFactory.decodeFile(getCaptureFile().getPath());
 //		imageView.setImageBitmap(init);
+
+        qualityBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                setPreQuality(seekBar.getProgress() + 100);
+            }
+        });
 
         thresholdBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
@@ -117,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
 //                    Bitmap bitmap = BitmapFactory.decodeFile(imageFileService.getImagePath(CAMERA_IMAGE_FILE));
 //                    imageView.setImageBitmap(bitmap);
 //                }
-                BitmapWorkerTask loadTask = new BitmapWorkerTask(imageView);
+                BitmapWorkerTask loadTask = new BitmapWorkerTask(MainActivity.this, imageView);
                 loadTask.execute(imageFileService.getImagePath(CAMERA_IMAGE_FILE));
             }
         }
@@ -150,7 +169,14 @@ public class MainActivity extends AppCompatActivity {
 
 //        Bitmap edgeBitmap = BitmapFactory.decodeFile(edgeFile.getPath());
 //        imageView.setImageBitmap(edgeBitmap);
-        BitmapWorkerTask loadTask = new BitmapWorkerTask(imageView);
+        BitmapWorkerTask loadTask = new BitmapWorkerTask(MainActivity.this, imageView);
         loadTask.execute(edgeFile.getPath());
+    }
+
+    private void setPreQuality(int value) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("image-quality", value);
+        editor.commit();
     }
 }

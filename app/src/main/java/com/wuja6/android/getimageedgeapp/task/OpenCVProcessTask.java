@@ -2,6 +2,7 @@ package com.wuja6.android.getimageedgeapp.task;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.wuja6.android.getimageedgeapp.param.CannyParam;
 
@@ -37,5 +38,6 @@ public class OpenCVProcessTask extends AsyncTask<CannyParam, Void, String> {
     @Override
     protected void onPostExecute(String s) {
         dialogReference.get().hide();
+        Log.i("output-path", s);
     }
 }
